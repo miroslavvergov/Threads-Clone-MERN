@@ -108,6 +108,7 @@ const logoutUser = (req, res) => {
 	}
 };
 
+
 const followUnFollowUser = async (req, res) => {
 	try {
 		const { id } = req.params;
