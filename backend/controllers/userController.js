@@ -3,6 +3,7 @@ import Post from "../models/postModel.js";
 import bcrypt from "bcryptjs";
 import generateTokenAndSetCookie from "../utils/helpers/generateTokenAndSetCookie.js";
 import mongoose from "mongoose";
+import {v2 as cloudinary} from "cloudinary";
 
 const getUserProfile = async (req, res) => {
   // We will fetch user profile either with username or userId
@@ -167,6 +168,16 @@ const updateUser = async (req, res) => {
       const hashedPassword = await bcrypt.hash(password, salt);
       user.password = hashedPassword;
     }
+
+    if(profilePic){
+      if(user.profilePic){
+        await cloudinary.uploader.destroy(user.profilePic.split("/").pop().split(".")[0])
+      }
+      
+      const uploadedResponse = await cloudinary.uploader.upload(profilePic);
+      profilePic = uploadedResponse.secure_url;
+    }
+
 
     user.name = name || user.name;
     user.email = email || user.email;
